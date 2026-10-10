@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sign in — Kalimark Careers</title>
+  <meta name="robots" content="noindex">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/png" href="images/favicon%20kalimark.png"><link rel="apple-touch-icon" href="images/favicon%20kalimark.png">
+  <link rel="stylesheet" href="css/styles.css?v=20261009h">
+  <link rel="stylesheet" href="css/careers.css?v=20261009h">
+</head>
+<body>
+
+  <header class="topbar">
+    <a class="brand" href="admin.html">
+      <img src="images/logo.png" alt="Kalimark" class="brand-logo">
+      <span class="brand-label">Hiring dashboard</span>
+    </a>
+    <a class="nav-link" href="careers.html">Back to careers page</a>
+  </header>
+
+  <!-- SIGN IN -->
+  <div class="login-page" id="loginPage">
+    <div class="login-card">
+      <h1>Sign in</h1>
+      <p class="login-sub">For HR and admin staff. Candidates apply from the careers page — no account needed.</p>
+
+      <label for="loginUsername">Username</label>
+      <input type="text" id="loginUsername" autocomplete="username" autocapitalize="none">
+
+      <label for="loginPassword">Password</label>
+      <input type="password" id="loginPassword" autocomplete="current-password">
+
+      <button class="primary-btn full" id="loginBtn">Sign in</button>
+      <div class="msg" id="loginMsg"></div>
+
+      <div class="login-foot">
+        <span>Forgotten your password?</span>
+        <button class="text-btn" id="forgotBtn">Send me a reset</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- DASHBOARD -->
+  <div class="admin-wrap is-loading" id="dashboard">
+    <div class="admin-header">
+      <h1>Welcome, <span id="adminName"></span><span class="role-tag" id="adminRoleTag"></span></h1>
+      <div class="header-actions">
+        <button class="ghost-btn" onclick="openChangePassword(false)">Change password</button>
+        <button class="ghost-btn" onclick="signOut()">Sign out</button>
+      </div>
+    </div>
+
+    <div class="dash-progress" aria-hidden="true"></div>
+    <div class="dash-loader" role="status" aria-live="polite">
+      <span class="cr-spinner"></span>
+      <p>Loading your dashboard…</p>
+    </div>
+
+    <div class="stats-row six" data-role="hr">
+      <div class="stat-card accent-red" data-go="jobsTab">
+        <div class="stat-value" id="statActiveJobs">–</div>
+        <div class="stat-label">Roles open</div>
+      </div>
+      <div class="stat-card accent-ink" data-go="appsTab">
+        <div class="stat-value" id="statTotalApps">–</div>
+        <div class="stat-label">Applications</div>
+      </div>
+      <div class="stat-card" data-go="interviewsTab">
+        <div class="stat-value" id="statInterviews">–</div>
+        <div class="stat-label">Awaiting interview result</div>
+      </div>
+      <div class="stat-card accent-purple" data-go="shortlistTab">
+        <div class="stat-value" id="statShortlisted">–</div>
+        <div class="stat-label">Shortlisted</div>
+      </div>
+      <div class="stat-card accent-ok" data-go="hiredTab">
+        <div class="stat-value" id="statHired">–</div>
+        <div class="stat-label">Hired</div>
+      </div>
+      <div class="stat-card accent-danger" data-go="rejectedTab">
+        <div class="stat-value" id="statRejected">–</div>
+        <div class="stat-label">Rejected</div>
+      </div>
+    </div>
+
+    <div class="tabs">
+      <button class="tab-btn" data-tab="postTab" data-role="hr" onclick="switchTab('postTab')">Post a role</button>
+      <button class="tab-btn" data-tab="jobsTab" data-role="hr" onclick="switchTab('jobsTab')">Manage roles</button>
+      <button class="tab-btn" data-tab="appsTab" data-role="hr" onclick="switchTab('appsTab')">Applications<span class="tab-count" id="cntApps">–</span></button>
+      <button class="tab-btn" data-tab="interviewsTab" data-role="hr" onclick="switchTab('interviewsTab')">Interviews<span class="tab-count" id="cntInterviews">–</span></button>
+      <button class="tab-btn" data-tab="shortlistTab" data-role="hr" onclick="switchTab('shortlistTab')">Shortlisted<span class="tab-count" id="cntShortlisted">–</span></button>
+      <button class="tab-btn" data-tab="hiredTab" data-role="hr" onclick="switchTab('hiredTab')">Hired<span class="tab-count" id="cntHired">–</span></button>
+      <button class="tab-btn" data-tab="rejectedTab" data-role="hr" onclick="switchTab('rejectedTab')">Rejected<span class="tab-count" id="cntRejected">–</span></button>
+      <button class="tab-btn" data-tab="hrTab" data-role="admin" onclick="switchTab('hrTab')">HR accounts</button>
+      <button class="tab-btn" data-tab="applicantsTab" data-role="admin" onclick="switchTab('applicantsTab')">Applicants</button>
+    </div>
+
+    <!-- Post a role -->
+    <div class="tab-panel" id="postTab" data-role="hr">
+      <div class="panel-card">
+        <h2 id="jobFormHeading">New role</h2>
+        <input type="hidden" id="jobEditId">
+
+        <div class="grid-2">
+          <div>
+            <label for="jobTitle">Title <span class="required">*</span></label>
+            <input type="text" id="jobTitle">
+          </div>
+          <div>
+            <label for="jobDepartment">Team</label>
+            <select id="jobDepartment">
+              <option>Operations</option>
+              <option>Quality</option>
+              <option>Sales</option>
+              <option>Marketing</option>
+              <option>Human Resources</option>
+              <option>Finance</option>
+              <option>Engineering</option>
+              <option>Analytics</option>
+              <option>Logistics</option>
+              <option>Customer Success</option>
+              <option value="Other">Other</option>
+            </select>
+            <input type="text" id="jobDepartmentOther" placeholder="Name the team" style="display:none; margin-top:8px;">
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div>
+            <label for="jobLocation">Location</label>
+            <select id="jobLocation">
+              <option>Virudhunagar, Tamil Nadu</option>
+              <option>Madurai, Tamil Nadu</option>
+              <option>Coimbatore, Tamil Nadu</option>
+              <option>Chennai, Tamil Nadu</option>
+              <option>Bengaluru, Karnataka</option>
+              <option>Remote</option>
+              <option>Hybrid</option>
+              <option value="Other">Other</option>
+            </select>
+            <input type="text" id="jobLocationOther" placeholder="Name the location" style="display:none; margin-top:8px;">
+          </div>
+          <div>
+            <label for="jobType">Employment type</label>
+            <select id="jobType">
+              <option>Full-time</option>
+              <option>Part-time</option>
+              <option>Contract</option>
+              <option>Internship</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div>
+            <label for="jobSalary">Pay range</label>
+            <select id="jobSalary">
+              <option value="Not disclosed">Not disclosed</option>
+              <option value="Under Rs 3,00,000 / year">Under Rs 3,00,000 / year</option>
+              <option value="Rs 3,00,000 - 5,00,000 / year">Rs 3,00,000 - 5,00,000 / year</option>
+              <option value="Rs 5,00,000 - 8,00,000 / year">Rs 5,00,000 - 8,00,000 / year</option>
+              <option value="Rs 8,00,000 - 12,00,000 / year">Rs 8,00,000 - 12,00,000 / year</option>
+              <option value="Rs 12,00,000 - 20,00,000 / year">Rs 12,00,000 - 20,00,000 / year</option>
+              <option value="Rs 20,00,000+ / year">Rs 20,00,000+ / year</option>
+              <option value="Custom">Something else</option>
+            </select>
+            <input type="text" id="jobSalaryOther" placeholder="e.g. Rs 18,000 / month" style="display:none; margin-top:8px;">
+          </div>
+          <div>
+            <label for="jobDeadline">Closes on</label>
+            <input type="date" id="jobDeadline">
+          </div>
+        </div>
+
+        <label for="jobEmployerEmail">Send new applications to <span class="required">*</span></label>
+        <input type="email" id="jobEmployerEmail" placeholder="hiring-manager@kalimark.com">
+
+        <label for="jobDescription">About the role <span class="required">*</span></label>
+        <textarea id="jobDescription" rows="5"></textarea>
+
+        <label for="jobRequirements">What we are looking for</label>
+        <textarea id="jobRequirements" rows="4" placeholder="One point per line."></textarea>
+
+        <label for="jobStatus">Visibility</label>
+        <select id="jobStatus">
+          <option value="Active">Open — shown on the careers page</option>
+          <option value="Closed">Closed — hidden</option>
+        </select>
+
+        <button class="primary-btn" style="margin-top:22px;" id="saveJobBtn" onclick="saveJob()">Publish role</button>
+        <button class="ghost-btn" style="margin-top:22px; display:none;" id="cancelEditBtn" onclick="resetJobForm()">Cancel</button>
+        <div class="msg" id="jobFormMsg"></div>
+      </div>
+    </div>
+
+    <!-- Manage roles -->
+    <div class="tab-panel" id="jobsTab" data-role="hr">
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Title</th><th>Team</th><th>Location</th><th>Type</th><th>Status</th><th>Posted</th><th>Action</th></tr></thead>
+          <tbody id="jobsTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Applications: every candidate, wherever they are in the process -->
+    <div class="tab-panel" id="appsTab" data-role="hr">
+      <p class="tab-intro">Everyone who applied. The <strong>Next step</strong> column shows what to do for each person. Click a name to see their full history.</p>
+      <div class="panel-card toolbar">
+        <input type="search" id="appSearch" placeholder="Search name, email or phone" oninput="renderAppsTable()">
+        <select class="filter-select" id="appJobFilter" onchange="renderAllLists()">
+          <option value="">Every role</option>
+        </select>
+        <select class="filter-select" id="appStageFilter" onchange="renderAppsTable()">
+          <option value="">Every stage</option>
+          <option value="new">New</option>
+          <option value="Interview Scheduled">Interview booked</option>
+          <option value="Shortlisted">Shortlisted</option>
+          <option value="Hired">Hired</option>
+          <option value="Rejected">Rejected</option>
+        </select>
+      </div>
+      <div class="table-wrap">
+        <table class="mcards">
+          <thead>
+            <tr>
+              <th>Candidate</th><th>Role</th><th>Contact</th><th>Experience</th>
+              <th>Resume</th><th>Status</th><th>Applied</th><th>Next step</th>
+            </tr>
+          </thead>
+          <tbody id="appsTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Interviews: one row per round, result recorded here -->
+    <div class="tab-panel" id="interviewsTab" data-role="hr">
+      <p class="tab-intro">One row per interview round. After the interview, record the result — <strong>Shortlist</strong> moves the candidate to the Shortlisted tab, <strong>Reject</strong> to the Rejected tab, <strong>Hire</strong> to the Hired tab.</p>
+      <div class="panel-card toolbar">
+        <div class="chips" id="ivChips">
+          <button class="chip on" data-f="pending" onclick="setIvFilter('pending')">Awaiting result</button>
+          <button class="chip" data-f="done" onclick="setIvFilter('done')">Completed</button>
+          <button class="chip" data-f="all" onclick="setIvFilter('all')">All rounds</button>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table class="mcards">
+          <thead>
+            <tr>
+              <th>Candidate</th><th>Role</th><th>Round</th><th>Date &amp; time</th><th>Mode &amp; where</th>
+              <th>Result</th><th>Action</th><th>Set by</th>
+            </tr>
+          </thead>
+          <tbody id="interviewsTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Shortlisted: everyone who cleared at least one round -->
+    <div class="tab-panel" id="shortlistTab" data-role="hr">
+      <p class="tab-intro">Everyone who has cleared a round. From here, schedule the next round, hire, or reject. Candidates stay listed after they are hired or rejected, so you can see who came through this stage.</p>
+      <div class="table-wrap">
+        <table class="mcards">
+          <thead>
+            <tr><th>Candidate</th><th>Role</th><th>Rounds cleared</th><th>Status</th><th>Shortlisted on</th><th>Next step</th></tr>
+          </thead>
+          <tbody id="shortlistTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Hired -->
+    <div class="tab-panel" id="hiredTab" data-role="hr">
+      <div class="table-wrap">
+        <table class="mcards">
+          <thead>
+            <tr><th>Candidate</th><th>Role</th><th>Contact</th><th>Rounds</th><th>Hired on</th><th>Note</th></tr>
+          </thead>
+          <tbody id="hiredTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Rejected -->
+    <div class="tab-panel" id="rejectedTab" data-role="hr">
+      <div class="table-wrap">
+        <table class="mcards">
+          <thead>
+            <tr><th>Candidate</th><th>Role</th><th>Contact</th><th>Rejected at</th><th>On</th><th>Note</th></tr>
+          </thead>
+          <tbody id="rejectedTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- HR accounts (Admin only) -->
+    <div class="tab-panel" id="hrTab" data-role="admin">
+      <div class="panel-card">
+        <h2>Add an HR account</h2>
+        <div class="grid-2">
+          <div>
+            <label for="newHrUsername">Username <span class="required">*</span></label>
+            <input type="text" id="newHrUsername" autocapitalize="none">
+          </div>
+          <div>
+            <label for="newHrPassword">Password <span class="required">*</span></label>
+            <input type="text" id="newHrPassword" placeholder="At least 8 characters">
+          </div>
+        </div>
+        <div class="grid-2">
+          <div>
+            <label for="newHrFullName">Full name</label>
+            <input type="text" id="newHrFullName">
+          </div>
+          <div>
+            <label for="newHrEmail">Email</label>
+            <input type="email" id="newHrEmail">
+          </div>
+        </div>
+        <p class="form-hint">HR accounts can post roles, review applications and schedule interviews. Add an email so password resets can reach them.</p>
+        <button class="primary-btn" style="margin-top:20px;" onclick="addHrAccount()">Add account</button>
+        <div class="msg" id="hrFormMsg"></div>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Username</th><th>Name</th><th>Email</th><th>Roles posted</th><th>Applications</th><th>Hired</th><th>Added</th><th>Action</th></tr></thead>
+          <tbody id="hrTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Applicants (Admin only, read-only) -->
+    <div class="tab-panel" id="applicantsTab" data-role="admin">
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Applicant</th><th>Team</th><th>Role</th><th>Contact</th><th>Status</th><th>Applied</th></tr></thead>
+          <tbody id="applicantsTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Forgot password -->
+  <div class="modal-overlay" id="forgotModal">
+    <div class="modal-box">
+      <button class="modal-close" onclick="closeForgot()" aria-label="Close">&times;</button>
+      <h2>Reset your password</h2>
+      <p class="modal-sub">Enter your username. An admin account gets a temporary password by email; an HR account has its request sent to the administrator.</p>
+      <label for="forgotUsername">Username</label>
+      <input type="text" id="forgotUsername" autocapitalize="none">
+      <button class="primary-btn" id="forgotSubmitBtn" onclick="sendResetRequest()">Send reset</button>
+      <div class="msg" id="forgotMsg"></div>
+    </div>
+  </div>
+
+  <!-- Change password (also used to force a reset after a temporary password) -->
+  <div class="modal-overlay" id="changePasswordModal">
+    <div class="modal-box">
+      <button class="modal-close" id="changePasswordClose" onclick="closeChangePassword()" aria-label="Close">&times;</button>
+      <h2 id="changePasswordTitle">Change password</h2>
+      <p class="modal-sub" id="changePasswordSub">Set a new password for your account.</p>
+
+      <label for="changePasswordNew">New password <span class="required">*</span></label>
+      <input type="password" id="changePasswordNew" autocomplete="new-password" placeholder="At least 8 characters">
+      <label for="changePasswordConfirm">Confirm new password <span class="required">*</span></label>
+      <input type="password" id="changePasswordConfirm" autocomplete="new-password">
+
+      <button class="primary-btn" onclick="saveNewPassword()">Save password</button>
+      <div class="msg" id="changePasswordMsg"></div>
+    </div>
+  </div>
+
+  <!-- Schedule interview -->
+  <div class="modal-overlay" id="interviewModal">
+    <div class="modal-box">
+      <button class="modal-close" onclick="closeInterviewModal()" aria-label="Close">&times;</button>
+      <h2 id="interviewModalTitle">Schedule interview</h2>
+      <p class="modal-sub" id="interviewModalSub"></p>
+      <input type="hidden" id="interviewAppId">
+
+      <div class="grid-2">
+        <div>
+          <label for="interviewDate">Date <span class="required">*</span></label>
+          <input type="date" id="interviewDate">
+        </div>
+        <div>
+          <label for="interviewTime">Time <span class="required">*</span></label>
+          <input type="time" id="interviewTime">
+        </div>
+      </div>
+
+      <label for="interviewMode">Mode</label>
+      <select id="interviewMode">
+        <option value="Online">Online</option>
+        <option value="In-Person">In person</option>
+        <option value="Phone">Phone</option>
+      </select>
+
+      <label for="interviewLocation">Meeting link or address</label>
+      <input type="text" id="interviewLocation" placeholder="Meet link, or the office address">
+
+      <label for="interviewNotes">Notes for the applicant</label>
+      <textarea id="interviewNotes" rows="3" placeholder="e.g. Bring a printed resume. You will meet the plant manager."></textarea>
+
+      <button class="primary-btn" id="scheduleInterviewBtn" onclick="submitInterview()">Schedule and email candidate</button>
+      <div class="msg" id="interviewFormMsg"></div>
+    </div>
+  </div>
+
+  <!-- Record a result / make a decision -->
+  <div class="modal-overlay" id="resultModal">
+    <div class="modal-box">
+      <button class="modal-close" onclick="closeResultModal()" aria-label="Close">&times;</button>
+      <h2 id="resultTitle">Interview result</h2>
+      <p class="modal-sub" id="resultSub"></p>
+      <input type="hidden" id="resultAppId">
+      <input type="hidden" id="resultKind">
+
+      <div class="choice-row" id="resultChoices"></div>
+
+      <label for="resultNotes">Internal note <span class="muted">(only HR sees this)</span></label>
+      <textarea id="resultNotes" rows="2" placeholder="e.g. Strong on process knowledge, needs a plant visit round."></textarea>
+
+      <label for="resultMessage">Message to the candidate <span class="muted">(optional, added to the email)</span></label>
+      <textarea id="resultMessage" rows="2" placeholder="e.g. The next round will be with our plant manager."></textarea>
+
+      <div class="check-row">
+        <input type="checkbox" id="resultNotify" checked>
+        <label for="resultNotify">Email the candidate about this</label>
+      </div>
+
+      <button class="primary-btn" id="resultSaveBtn" onclick="submitResult()">Save</button>
+      <div class="msg" id="resultMsg"></div>
+    </div>
+  </div>
+
+  <!-- Candidate profile + journey -->
+  <div class="modal-overlay" id="candidateModal">
+    <div class="modal-box wide">
+      <button class="modal-close" onclick="closeCandidate()" aria-label="Close">&times;</button>
+      <div id="candidateBody"></div>
+    </div>
+  </div>
+
+  <script>
+    /* Safety net: if the data never arrives (network down), stop the spinner
+       after 25 s so the dashboard is still usable. admin.js normally clears it
+       much sooner, the moment the data is in. */
+    setTimeout(function () {
+      var d = document.getElementById('dashboard');
+      if (d && d.classList.contains('is-loading')) d.classList.remove('is-loading');
+    }, 25000);
+  </script>
+  <script src="js/config.js?v=20261009h"></script>
+  <script src="js/api.js?v=20261009h"></script>
+  <script src="js/admin.js?v=20261009h"></script>
+</body>
+</html>
